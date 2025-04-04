@@ -1,7 +1,7 @@
 
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Edwin Johnson / 001
  *
  *   This java file contains the problem solutions for the methods lastBoulder,
  *   showDuplicates, and pair methods. You should utilize the Java Collection
@@ -64,11 +64,26 @@ public class ProblemSolutions {
      */
 
   public static int lastBoulder(int[] boulders) {
+    // Use a max heap to always access the heaviest boulders
+      PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
 
-      //
-      // ADD YOUR CODE HERE - DO NOT FORGET TO ADD YOUR NAME / SECTION # ABOVE
-      //
-      return -1;
+      // Add all boulders to the priority queue
+      for (int boulder : boulders) {
+          pq.add(boulder);
+      }
+
+      // Process boulders until one or none remain
+      while (pq.size() > 1) {
+          int boulder1 = pq.poll(); // Heaviest boulder
+          int boulder2 = pq.poll(); // Second heaviest boulder
+
+          if (boulder1 != boulder2) {
+              pq.add(boulder1 - boulder2); // Put the new boulder back into the queue
+          }
+      }
+
+      // If there are no boulders left, return 0, otherwise return the last remaining boulder
+      return pq.isEmpty() ? 0 : pq.peek();
   }
 
 
@@ -90,12 +105,20 @@ public class ProblemSolutions {
      */
 
     public static ArrayList<String> showDuplicates(ArrayList<String> input) {
-
-        //
-        //  YOUR CODE GOES HERE
-        //
-        return new ArrayList<>();  // Make sure result is sorted in ascending order
-
+        HashMap<String, Integer> countMap = new HashMap<>();
+        TreeSet<String> duplicates = new TreeSet<>();
+        // Count occurrences of each string
+        for (String s : input) {
+            countMap.put(s, countMap.getOrDefault(s, 0) + 1);
+        }
+        // Identify duplicates
+        for (Map.Entry<String, Integer> entry : countMap.entrySet()) {
+            if (entry.getValue() > 1) {
+                duplicates.add(entry.getKey());
+            }
+        }
+        // Convert to ArrayList and return
+        return new ArrayList<>(duplicates);
     }
 
 
@@ -130,10 +153,16 @@ public class ProblemSolutions {
      */
 
     public static ArrayList<String> pair(int[] input, int k) {
-
-        //
-        //  YOUR CODE GOES HERE
-        //
-        return new ArrayList<>();  // Make sure returned lists is sorted as indicated above
+        HashSet<Integer> seen = new HashSet<>();
+        TreeSet<String> pairs = new TreeSet<>();
+        for (int num : input) {
+            int complement = k - num;
+            if (seen.contains(complement)) {
+                // Ensure the pair is ordered (smaller number first)
+                pairs.add("(" + Math.min(num, complement) + ", " + Math.max(num, complement) + ")");
+            }
+            seen.add(num);
+        }
+        return new ArrayList<>(pairs);
     }
 }
